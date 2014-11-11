@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script type="text/javascript" src=".\jquery\jquery-1.10.2.min.js"></script>
+        <script type="text/javascript" src=".\bootstrap\js\bootstrap.min.js"></script>
+
+
+        <link type="text/css"  href=".\bootstrap\css\bootstrap.min.css" rel="stylesheet" />
+        <style type="text/css">
+        	#container{
+        		width:80%;
+        		float:left;
+        		margin-left:10%; 
+        		border:1px solid #ddd; 
+        		border-radius: 5px;
+        		margin-top: 20px;
+        		padding: 2em;
+        	}
+        	label{
+        		color:#81817C;
+        	}
+        </style>
+	</head>
+	<body ng-app="">
+		<div ng-controller="randomTable" id="container">
+			<label>SUMALO!</label>
+			<!-- {{values}} -->
+			<table class="table table-striped table-condensed table-bordered">
+				<tbody>
+					<tr ng-repeat="value in values">
+						<td ng-repeat="val in value track by $index">{{val}}</td>
+					</tr>
+				</tbody>
+			</table>
+			<button type="button" ng-click="reload()" ng-class="class">{{buttonName}}</button>
+			<!-- <button class="btn" ng-click="clear()" ng-show="!run"><span class="fa fa-power-off"></span>Clear</button></button> -->
+			<a ng-show="sum>0 && !run"> Total: <b style="font-size:14pt;">{{sum}}</b></a>
+			<p style="float:right;font-size:11pt;">Segundos: <b style="font-size:14pt;">{{seg}}</b></p>
+		</div>
+		<script type="text/javascript">
+
+			function randomTable($scope, $interval){
+				sum = 0;
+				loadValues = function(){
+					var values = [];
+					var num = null;
+					sum = 0;
+					for (var i = 0; i < 8; i++) {
+						values.push([]);
+						for (var j = 0; j < 8; j++) {
+							num = Math.floor(Math.random() * 99) + 1;
+							sum += num;
+							values[i].push((num<10)? "0"+num: num );//Math.floor(Math.random() * 6) + 1
+						};
+					};
+					// printValues(values);
+					return values;
+				}
+
+
+				$scope.values = [];
+				$scope.buttonName = "Jugar";
+				$scope.class = "btn btn-success";
+				$scope.sum = 0;
+				$scope.seg = 0;
+				$scope.timer = false;
+				$scope.run = false;
+				$scope.reload = function(){
+					$scope.run = !$scope.run;
+					if($scope.run){
+						$scope.clear();
+						$scope.countSeg();
+						$scope.values = loadValues();
+						$scope.sum = sum;
+					}else
+						$scope.StopSeg();
+				}
+				$scope.countSeg = function(){
+					$scope.buttonName = "Stop";
+					$scope.class = "btn btn-danger";
+					$scope.timer = $interval(function(){
+				        $scope.seg++;
+				        // $scope.$apply();
+				        // console.log($scope.countDown);
+				        // console.log($scope.timer)
+				    }, 1000);
+				}
+				$scope.StopSeg = function(){
+					$scope.buttonName = "Jugar Otra Vez";
+					$scope.class = "btn btn-success";
+					$interval.cancel($scope.timer);
+				}
+				$scope.clear = function(){
+					$scope.seg = 0;
+				}
+
+			}
+		</script>
+
+
+	<script type="text/javascript" src=".\angular\angular.min.js"></script>
+	</body>
+</html>
